@@ -69,11 +69,16 @@ class Camera {
         perspectiveCameraHelper: new THREE.CameraHelper(this.camera.perspectiveCamera),
       }
 
-      this.scene.add(this.helper.orthographicCameraHelper)
+      this.helper.orthographicCameraHelper.visible = false
+      this.helper.perspectiveCameraHelper.visible = false
 
+      this.scene.add(this.helper.orthographicCameraHelper)
       this.scene.add(this.helper.perspectiveCameraHelper)
 
       this.folder = this.debug.addFolder("Camera")
+
+      this.debug.__folders["Helpers"].add(this.helper.orthographicCameraHelper, "visible").name("Orthographic camera helper")
+      this.debug.__folders["Helpers"].add(this.helper.perspectiveCameraHelper, "visible").name("Perspective camera helper")
 
       // Perspective camera
       const debugPerspectiveCamera = this.folder.addFolder("Perspective Camera")

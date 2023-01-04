@@ -12,11 +12,14 @@ import Tick from "./utils/Tick"
 import Camera from "./environment/Camera"
 import Renderer from "./environment/Renderer"
 import World from "./world/world"
+import Controls from "./environment/Controls"
 
 class Experience {
   camera!: Camera
-  canvas!: Element
+  canvas!: HTMLElement
+  controls!: Controls
   debug!: GUI
+  folder!: GUI
   renderer!: Renderer
   scene!: THREE.Scene
   setup!: SetupType
@@ -26,7 +29,7 @@ class Experience {
 
   static instance: Experience
 
-  constructor(_canvas?: Element) {
+  constructor(_canvas?: HTMLElement) {
     if (Experience.instance) {
       return Experience.instance
     }
@@ -47,6 +50,7 @@ class Experience {
     this.renderer = new Renderer()
 
     this.world = new World()
+    this.controls = new Controls()
 
     // Events
     this.time.on("update", (args: { elapsed: number; delta: number }) => {
@@ -99,6 +103,7 @@ class Experience {
 
   update(elapsed: number, delta: number) {
     this.camera.update()
+    this.controls.update()
     this.renderer.update()
   }
 
@@ -111,8 +116,16 @@ class Experience {
     const gridHelper = new THREE.GridHelper(50, 50)
     this.scene.add(gridHelper)
 
-    const axesHelper = new THREE.AxesHelper(5)
+    const axesHelper = new THREE.AxesHelper(100)
     this.scene.add(axesHelper)
+    
+    axesHelper.visible = false
+    gridHelper.visible = false
+
+    this.folder = this.debug.addFolder("Helpers")
+    
+    this.folder.add(gridHelper, "visible").name("Grids")
+    this.folder.add(axesHelper, "visible").name("3D Axis")
   }
 }
 
