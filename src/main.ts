@@ -3,7 +3,7 @@ import Main from "./js/general"
 
 import "./style/style.scss"
 
-const canvas: Element = document.querySelector("canvas#webgl")!
+const canvas: HTMLElement = document.querySelector("canvas#webgl")!
 
 const experience = new Experience(canvas)
 const main = new Main()

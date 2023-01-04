@@ -1,15 +1,19 @@
 import * as THREE from "three"
+import { Object3D } from "three"
 
 import Experience from ".."
 import Camera from "../environment/Camera"
 import Sizes from "../utils/Sizes"
+import Floor from "./components/Floor"
 
 class World {
-  components: Experience
-  sizes: Sizes
-  scene: any
   canvas: Element
   camera: Camera
+  components: Experience
+  container!: THREE.Object3D
+  floor!: Floor
+  scene: THREE.Scene
+  sizes: Sizes
 
   constructor() {
     this.components = new Experience()
@@ -19,17 +23,21 @@ class World {
     this.canvas = this.components.canvas
     this.camera = this.components.camera
 
+    this.container = new Object3D()
+    this.container.matrixAutoUpdate = false
+
     this.initScene()
   }
 
   initScene() {
-    const mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(2, 2, 10),
-      new THREE.MeshBasicMaterial({ color: "red" })
-    )
-    mesh.name = "Cube"
+    this.initFloor()
 
-    this.scene.add(mesh)
+    this.scene.add(this.container)
+  }
+
+  initFloor() {
+    this.floor = new Floor()
+    this.container.add(this.floor.container)
   }
 }
 

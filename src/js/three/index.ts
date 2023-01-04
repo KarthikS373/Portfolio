@@ -11,8 +11,9 @@ import scene from "./environment/Scene"
 import Tick from "./utils/Tick"
 import Camera from "./environment/Camera"
 import Renderer from "./environment/Renderer"
-import World from "./world/world"
 import Controls from "./environment/Controls"
+import World from "./world/world"
+import LoadManager from "./utils/LoadManager"
 
 class Experience {
   camera!: Camera
@@ -20,6 +21,7 @@ class Experience {
   controls!: Controls
   debug!: GUI
   folder!: GUI
+  resources!: LoadManager
   renderer!: Renderer
   scene!: THREE.Scene
   setup!: SetupType
@@ -45,6 +47,7 @@ class Experience {
 
     this.sizes = new Sizes()
     this.time = new Tick()
+    this.resources = new LoadManager()
 
     this.camera = new Camera()
     this.renderer = new Renderer()
@@ -118,12 +121,12 @@ class Experience {
 
     const axesHelper = new THREE.AxesHelper(100)
     this.scene.add(axesHelper)
-    
+
     axesHelper.visible = false
     gridHelper.visible = false
 
     this.folder = this.debug.addFolder("Helpers")
-    
+
     this.folder.add(gridHelper, "visible").name("Grids")
     this.folder.add(axesHelper, "visible").name("3D Axis")
   }

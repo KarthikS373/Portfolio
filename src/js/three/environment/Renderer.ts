@@ -9,12 +9,14 @@ class Renderer {
   camera: Camera
   canvas: Element
   components: Experience
+  debug: GUI
+  folder!: GUI
   orthographicCamera: THREE.OrthographicCamera
   perspectiveCamera: THREE.PerspectiveCamera
   renderer!: THREE.WebGLRenderer
   scene: THREE.Scene
   sizes: Sizes
-  debug: GUI
+  showScissor!: boolean
 
   constructor() {
     this.components = new Experience()
@@ -27,6 +29,8 @@ class Renderer {
     this.camera = this.components.camera
     this.perspectiveCamera = this.camera.camera.perspectiveCamera
     this.orthographicCamera = this.camera.camera.orthographicCamera
+
+    this.showScissor = false
 
     this.initRenderer()
     this.setdebug()
@@ -46,8 +50,14 @@ class Renderer {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
     this.renderer.toneMapping = THREE.CineonToneMapping
     this.renderer.toneMappingExposure = 1.5
+    this.renderer.setClearColor(0x000000, 1)
 
     this.resize()
+
+    if (this.debug) {
+      this.folder = this.debug.addFolder("Renderer")
+      this.folder.add(this, "showScissor").name("Show Side Viewport")
+    }
   }
 
   resize() {
@@ -67,22 +77,14 @@ class Renderer {
       this.renderer.setViewport(0, 0, this.sizes.width, this.sizes.height)
       this.renderer.render(this.scene, this.perspectiveCamera)
 
-      this.renderer.setScissorTest(true)
-      this.renderer.setViewport(
-        this.sizes.width - this.sizes.width / 3,
-        this.sizes.height / 16,
-        this.sizes.width / 3,
-        this.sizes.height / 3
-      )
-      this.renderer.setScissor(
-        this.sizes.width - this.sizes.width / 3,
-        this.sizes.height / 16,
-        this.sizes.width / 3,
-        this.sizes.height / 3
-      )
+      if (this.showScissor) {
+        this.renderer.setScissorTest(true)
+        this.renderer.setViewport(this.sizes.width - this.sizes.width / 3, this.sizes.height / 16, this.sizes.width / 3, this.sizes.height / 3)
+        this.renderer.setScissor(this.sizes.width - this.sizes.width / 3, this.sizes.height / 16, this.sizes.width / 3, this.sizes.height / 3)
 
-      this.renderer.render(this.scene, this.orthographicCamera)
-      this.renderer.setScissorTest(false)
+        this.renderer.render(this.scene, this.orthographicCamera)
+        this.renderer.setScissorTest(false)
+      }
     }
   }
 }
