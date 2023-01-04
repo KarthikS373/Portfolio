@@ -1,3 +1,4 @@
+import { GUI } from "dat.gui"
 import * as THREE from "three"
 import { Object3D } from "three"
 
@@ -11,6 +12,7 @@ class World {
   camera: Camera
   components: Experience
   container!: THREE.Object3D
+  debug: GUI
   floor!: Floor
   scene: THREE.Scene
   sizes: Sizes
@@ -22,6 +24,8 @@ class World {
     this.scene = this.components.scene
     this.canvas = this.components.canvas
     this.camera = this.components.camera
+
+    this.debug = this.components.debug
 
     this.container = new Object3D()
     this.container.matrixAutoUpdate = false
@@ -36,7 +40,7 @@ class World {
   }
 
   initFloor() {
-    this.floor = new Floor()
+    this.floor = new Floor({ debug: this.debug })
     this.container.add(this.floor.container)
   }
 }
