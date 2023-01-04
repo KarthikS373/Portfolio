@@ -1,3 +1,4 @@
+import * as THREE from "three"
 import { EventEmitter } from "events"
 
 import Loader from "../environment/Loaders"
@@ -25,6 +26,15 @@ class LoadManager extends EventEmitter {
     this.loader.on("load", ({ asset, data }) => {
       this.items[asset.name] = data
       console.log(`${asset.name} Loaded`)
+
+      if (asset.type == "texture") {
+        const texture = new THREE.Texture()
+
+        texture.image = data
+        texture.needsUpdate = true
+
+        this.items[`${asset.name}Texture`] = texture
+      }
 
       this.emit("load", [this.loader.progress / this.loader.queue])
     })
