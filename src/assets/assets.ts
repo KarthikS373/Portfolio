@@ -1,44 +1,56 @@
 export type AssetType = { name: string; path: string; type: "texture" | "model" | "image" | "video" }
 
-const assets: Array<AssetType> = [
+const assets: Array<AssetType> = []
+
+const _assets: Array<AssetType> = [
   {
     name: "testTexture",
-    path: "",
+    path: "testTextureJpeg.jpeg",
+    type: "texture",
+  },
+  {
+    name: "testTexture",
+    path: "testTextureJpg.jpg",
+    type: "texture",
+  },
+  {
+    name: "testTexturePng",
+    path: "testTexture.png",
     type: "texture",
   },
   {
     name: "testModel.gltf",
-    path: "",
+    path: "testModel.gltf",
     type: "model",
   },
   {
     name: "testModel.glb",
-    path: "",
+    path: "testModel.glb",
     type: "model",
   },
   {
     name: "testModel.fbx",
-    path: "",
+    path: "testModel.fbx",
     type: "model",
   },
   {
     name: "testModel.drc",
-    path: "",
+    path: "testModel.drc",
     type: "model",
   },
   {
     name: "testModel",
-    path: "",
+    path: "testModel.blend",
     type: "model",
   },
   {
-    name: "testImage",
-    path: "",
+    name: "testImagePng",
+    path: "testImage.png",
     type: "image",
   },
   {
-    name: "testVideo",
-    path: "",
+    name: "testVideo.mp4",
+    path: "testVideo.mp4",
     type: "video",
   },
 ]

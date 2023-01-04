@@ -5,11 +5,12 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js"
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
 
 import { AssetType } from "../../../assets/assets"
+import getExtension from "../../utils/getExtension.utils"
 
 interface LoaderInterface {
   extensions: Array<string>
   name: string
-  load: (asset: any) => void
+  load: (asset: AssetType) => void
 }
 
 class Loader extends EventEmitter {
@@ -33,30 +34,109 @@ class Loader extends EventEmitter {
 
   initLoaders() {
     // Assets - Image (JPEG, JPG, PNG)
-    const imageLoader: LoaderInterface = {
-      extensions: ["jpeg", "jpg", "png"],
+    this.loaders.push({
       name: "Image Loader",
-      load: (_resource) => {
+      extensions: ["jpeg", "jpg", "png"],
+      load: (asset: AssetType) => {
         const image = new Image()
 
         image.onload = () => {
-          this.initializeAsset(_resource, image)
+          this.initializeAsset(asset, image)
         }
 
         image.onerror = () => {
-          this.initializeAsset(_resource, image)
+          this.initializeAsset(asset, image)
         }
 
-        image.src = _resource.source
+        image.src = asset.path
       },
-    }
+    })
 
-    this.loaders.push(imageLoader)
+    // Draco - Models (DRC)
+    const dracoLoader = new DRACOLoader()
+    dracoLoader.setDecoderConfig({ type: "js" })
+    dracoLoader.setDecoderPath("/draco/")
+
+    this.loaders.push({
+      name: "Draco Loader",
+      extensions: ["drc"],
+      load: (asset: AssetType) => {
+        dracoLoader.load(
+          asset.path,
+          (file) => {
+            this.initializeAsset(asset, file)
+          },
+          (xhr: ProgressEvent<EventTarget>) => {
+            console.log(`${xhr.loaded} / ${xhr.total} loaded`)
+          },
+          (err: ErrorEvent) => {
+            console.warn(`There was an error loading Draco model : ${asset.name} - ${err.message}`)
+          }
+        )
+      },
+    })
+
+    // GLTF - Models (GLTF, GLB, GLTF-Embedded, GLTF-Draco compressed)
+    const gltfLoader = new GLTFLoader()
+    gltfLoader.setDRACOLoader(dracoLoader)
+
+    this.loaders.push({
+      name: "GLTF Loader",
+      extensions: ["gltf", "glb"],
+      load: (asset: AssetType) => {
+        gltfLoader.load(
+          asset.path,
+          (file) => {
+            this.initializeAsset(asset, file)
+          },
+          (xhr: ProgressEvent<EventTarget>) => {
+            console.log(`${xhr.loaded} / ${xhr.total} loaded`)
+          },
+          (err: ErrorEvent) => {
+            console.warn(`There was an error loading GLTF model : ${asset.name} - ${err.message}`)
+          }
+        )
+      },
+    })
+
+    // FBX - Models (FBX)
+    const fbxLoader = new FBXLoader()
+
+    this.loaders.push({
+      name: "FBX Loader",
+      extensions: ["fbx"],
+      load: (asset: AssetType) => {
+        fbxLoader.load(asset.path, (file) => {
+          this.initializeAsset(asset, file)
+        }),
+          (xhr: ProgressEvent<EventTarget>) => {
+            console.log(`${xhr.loaded} / ${xhr.total} loaded`)
+          },
+          (err: ErrorEvent) => {
+            console.warn(`There was an error loading FBX model : ${asset.name} - ${err.message}`)
+          }
+      },
+    })
   }
 
   load(assets: Array<AssetType>) {
     for (const asset of assets) {
-      this.loaders[0].load(asset)
+      this.queue++
+      const ext = getExtension(asset.path).extension
+      // console.log(ext)
+
+      if (typeof ext === "undefined") {
+        console.warn(`Invalid file type: ${asset.name}`)
+        continue
+      }
+
+      const loader = this.loaders.find((match) => match.extensions.find((_ext) => ext === _ext))
+      if (!loader) {
+        console.warn(`No loader found: ${asset.name}`)
+        continue
+      }
+
+      loader.load(asset)
     }
   }
 

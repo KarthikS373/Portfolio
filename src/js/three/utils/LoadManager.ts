@@ -5,7 +5,7 @@ import assets from "../../../assets/assets"
 
 class LoadManager extends EventEmitter {
   loader: Loader
-  items: {}
+  items: { [key: string]: any }
 
   constructor() {
     super()
@@ -23,7 +23,14 @@ class LoadManager extends EventEmitter {
 
   setupProgressTracker() {
     this.loader.on("load", ({ asset, data }) => {
+      this.items[asset.name] = data
       console.log(`${asset.name} Loaded`)
+
+      this.emit("load", [this.loader.progress / this.loader.queue])
+    })
+
+    this.loader.on("loaded", () => {
+      this.emit("ready")
     })
   }
 }
