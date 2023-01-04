@@ -25,24 +25,23 @@ class Floor {
     this.container.matrixAutoUpdate = false
 
     this.gradient = {
-      tl: "#3cb1f0",
-      tr: "#3cb1f0",
-      bl: "#3cb1f0",
-      br: "#3cb1f0",
+      tl: "#4a3cf0",
+      tr: "#5c63f0",
+      bl: "#4cb1f1",
+      br: "#4cb1f1",
     }
 
     if (params?.debug) this.debug = params.debug
 
     // Geometry
-    this.geometry = new THREE.PlaneGeometry(25, 25, 64, 64)
+    this.geometry = new THREE.PlaneGeometry(4, 4, 64, 64)
 
     // Material
     this.material = FloorShaderMaterial()
     this.setMaterialGradient.bind(this)()
 
     this.mesh = new THREE.Mesh(this.geometry, this.material)
-    this.mesh.position.set(0, 0, 0)
-    this.mesh.updateMatrix()
+    this.updateMeshProperty()
 
     this.container.add(this.mesh)
 
@@ -77,6 +76,13 @@ class Floor {
         this.folder.addColor(this.gradient, "br").name("Bottom Right Gradient").onChange(this.setMaterialGradient.bind(this))
       }
     }
+  }
+
+  updateMeshProperty() {
+    this.mesh.frustumCulled = false
+    this.mesh.matrixAutoUpdate = false
+    this.mesh.position.set(0, 0, 0)
+    this.mesh.updateMatrix()
   }
 }
 

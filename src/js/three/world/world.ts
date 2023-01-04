@@ -6,6 +6,7 @@ import Experience from ".."
 import Camera from "../environment/Camera"
 import Sizes from "../utils/Sizes"
 import Floor from "./components/Floor"
+import Sun from "./components/Sun"
 
 class World {
   canvas: Element
@@ -16,6 +17,7 @@ class World {
   floor!: Floor
   scene: THREE.Scene
   sizes: Sizes
+  sun!: Sun
 
   constructor() {
     this.components = new Experience()
@@ -35,6 +37,7 @@ class World {
 
   initScene() {
     this.initFloor()
+    this.initSun()
 
     this.scene.add(this.container)
   }
@@ -42,6 +45,12 @@ class World {
   initFloor() {
     this.floor = new Floor({ debug: this.debug })
     this.container.add(this.floor.container)
+  }
+
+  initSun() {
+    this.sun = new Sun({ debug: this.debug })
+    console.log(this.sun)
+    this.container.add(this.sun.container)
   }
 }
 

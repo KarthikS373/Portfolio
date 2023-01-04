@@ -11,7 +11,9 @@ varying vec3 varyingPosition;
 varying vec3 varyingColor;
 
 void main() {
-    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+    vec4 modelPosition = vec4(position, 1.0);
+    modelPosition.z += 1.0;
+    
     gl_Position = modelPosition;
 
     // Varying - Pass to Fragment shader
